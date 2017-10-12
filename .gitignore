@@ -91,3 +91,6 @@ bin/
 .ropeproject
 
 requirements.in
+
+# installation stuff
+share
