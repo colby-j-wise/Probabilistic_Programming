@@ -24,16 +24,17 @@ Colby Wise cjw2165
 
 \section{Proposal}
 
-Here you explain how you will cycle through Box's loop \citep{box1976science}.
-(Make sure to include references.) You may have some subsections like those
-below. Feel free to include a picture if you would like. Make sure everything
-fits into a single page, including references.
-
 \paragraph{Modeling}
+
+Our goal is to discover a function \\
+The gaussian process regression is a supervised learning technique that provides a mapping function between input and output data. It consideres pairs of input and noisy output data D and an unknown mapping function f(t) where t are timesteps. According to this definition the function f(t) is a set of random variables, where any subset has a joint gaussian distribution. \\
+To model our larger goal, we intend to represent a series of routing decisions with a Pittman-Yor process (simlar to a Dirichlet process) and similar to what is done in \href{http://web.mit.edu/jaillet/www/general/IAT2012.pdf}{this} research paper. Because our data is limited to pickup and dropoff information we would predict routes in the form of borough to borough trips rather than street level granularity.
 
 \paragraph{Inference}
 
 \paragraph{Criticism}
+
+Given our model, which predicts traffic from taxi data, we would compare against another source of travel time predictions. One such source is Google Maps, whose estimations we would use as a baseline of comparison.
 
 
 \bibliographystyle{apa}
