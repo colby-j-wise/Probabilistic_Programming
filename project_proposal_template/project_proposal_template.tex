@@ -1,9 +1,26 @@
 % !TEX program = pdflatex
 \documentclass{article}
-\input{preamble/preamble}
-\input{preamble/preamble_math}
+\usepackage{listings}
+\usepackage{tasks}
+\usepackage{graphicx}
+\usepackage{hyperref}
 
 \pagenumbering{gobble}
+
+\usepackage[                                                                       
+ paper  = letterpaper,                                                            
+ left   = 1.5in,                                                                 
+ right  = 1.5in,                                                                 
+ top    = 1.0in,                                                                  
+ bottom = 1.0in,                                                                  
+ ]{geometry}
+
+\hypersetup{
+    colorlinks=true,
+    linkcolor=blue,
+    filecolor=magenta,      
+    urlcolor=magenta,
+}
 
 \begin{document}
 
@@ -18,23 +35,29 @@ Colby Wise cjw2165
 
 \section{Description}
 
-\paragraph{Goal} The most popular route suggestion engines minimize the expected time to a destination based on maximizing speed while minimizing distance. Surprisingly, these models use real-time data as reported by users to determine congestion without any predictive element. Our first goal is to use taxi data as a proxy for traffic in Manhattan. This is the first step in creating a better route suggestion engine.
+\paragraph{Goal} The most popular route suggestion engines minimize the expected time to a destination based on maximizing speed while minimizing distance. These models use real-time data as reported by users to determine congestion, but have no predictive element of future traffic. Our first goal is to use taxi data as a proxy for traffic in Manhattan. This is the first step in creating a better route suggestion engine.
 
-\paragraph{Data} In 2013 the NYC Taxi and Limousine Commission (TLC) began publicly releasing detailed yellow taxi, green taxi, and limousine ride information. Each data point included date, time, GPS location of pickup and dropoff, trip distance, payment type, and trip cost. We will be bucketing that data into different neighborhoods, with the precision of the neighborhood specification to be determined.
+\paragraph{Data} We will be using the Taxi and Limousine Commission's yellow and green cab data. This includes date, time, GPS location of pickup and drop off, trip distance, payment type, and trip cost. We will bucket that data into different neighborhoods, with the granularity to be determined.
 
 \section{Proposal}
 
 \paragraph{Modeling}
 
-Our goal is to discover a function \\
-The gaussian process regression is a supervised learning technique that provides a mapping function between input and output data. It consideres pairs of input and noisy output data D and an unknown mapping function f(t) where t are timesteps. According to this definition the function f(t) is a set of random variables, where any subset has a joint gaussian distribution. \\
-To model our larger goal, we intend to represent a series of routing decisions with a Pittman-Yor process (simlar to a Dirichlet process) and similar to what is done in \href{http://web.mit.edu/jaillet/www/general/IAT2012.pdf}{this} research paper. Because our data is limited to pickup and dropoff information we would predict routes in the form of borough to borough trips rather than street level granularity.
+As part of Box's Loop will have to experiment with a few temporal-spatial models. we will first implement a Gaussian Process Regression. It considers pairs of input and noisy output data $D$ and an unknown mapping function $f(t)$ where $t$ are time steps. This function can be viewed as a covariance function with unknown parameters $\theta$. The general nature of GP's means this can be solved in closed form using maximum likelihood estimation. Within the Gaussian Process we will compare model inference using different Kernel functions. \\
+\textbf{Ref:} 
+\href{http://www.synchromedia.ca/system/files/1570265950.pdf}{Gaussian Process Regression based Traffic Modeling}\\
+\ \newline
+To model our larger goal, we intend to represent a series of routing decisions with a Pittman-Yor process (a Dirichlet process with two parameters) similar to what is done in the research paper referenced below. Because our data is limited to pickup and drop-off information we would predict routes in the form of borough to borough trips rather than street level.\\
+\textbf{Ref:} 
+\href{http://web.mit.edu/jaillet/www/general/IAT2012.pdf}{Hierarchical Bayesian Approach to Modeling Urban Traffic}
 
 \paragraph{Inference}
+For the Gaussian Process model we can use gradient-based inference methods to solve for the posterior by maximizing the log-likelihood function. Depending on the complexity of the model we may use other techniques for large-scale inference like those referenced in the below NIPS paper. \textit{Scalable Inference for Gaussian Process Models with Black-Box Likelihoods}\\
+\textbf{Ref:} 
+\href{https://papers.nips.cc/paper/5665-scalable-inference-for-gaussian-process-models-with-black-box-likelihoods.pdf}{Scalable Inference for Gaussian Process Models}
 
 \paragraph{Criticism}
-
-Given our model, which predicts traffic from taxi data, we would compare against another source of travel time predictions. One such source is Google Maps, whose estimations we would use as a baseline of comparison.
+Given our model, which predicts traffic from taxi data, we would compare against another sources of travel time predictions. One such source is Google Maps, whose estimations we would use as a baseline of comparison.
 
 
 \bibliographystyle{apa}
