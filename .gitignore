@@ -92,17 +92,5 @@ bin/
 
 requirements.in
 
-# installation stuff
-share
-
-# mac stuff
-__MACOSX/
-
-# latex stuff
-project_proposal_template/preamble/.DS_Store
-project_proposal_template/project_proposal_template.aux
-project_proposal_template/project_proposal_template.out
-project_proposal_template/project_proposal_template.pdf
-project_proposal_template/project_proposal_template.synctex.gz
-project_proposal_template/.DS_STORE
-.DS_STORE
+# 6998 final project additions
+data
