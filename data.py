@@ -29,4 +29,24 @@ def rotate(data, theta):
     """
     rotation_matrix = tf.convert_to_tensor([[tf.cos(theta), -tf.sin(theta)],
                                             [tf.sin(theta), tf.cos(theta)]])
-    return tf.matmul(rotation_matrix, data, transpose_b=True, dtype=tf.float32)
+    return tf.matmul(rotation_matrix, data, transpose_b=True)
+
+
+def bin_2d(dataset, num_bins):
+    """
+    dataset is a two dimensional numpy array of shape (?, 2)
+    """
+    start_longitude = np.min(dataset[:, 0])
+    stop_longitude = np.max(dataset[:, 0])
+    start_latitude = np.min(dataset[:, 1])
+    stop_latitude = np.max(dataset[:, 1])
+
+    step_size_longitude = (stop_longitude - start_longitude) / num_bins
+    step_size_latitude = (stop_latitude - start_latitude) / num_bins
+
+    xedges = np.arange(start_longitude, stop_longitude, step_size_longitude)
+    yedges = np.arange(start_latitude, stop_latitude, step_size_latitude)
+    H = np.histogram2d(dataset[:, 0],
+                       dataset[:, 1],
+                       bins=(xedges, yedges))
+    return H[0]
