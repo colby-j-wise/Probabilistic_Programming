@@ -45,3 +45,7 @@ def bin_2d(dataset, num_bins, pad_longitude=.02, pad_latitude=.02):
                            bins=num_bins,
                            range=[[xmin, xmax], [ymin, ymax]])
         return H
+
+
+def cars_in_bin(bin_indices, xaxes, yaxes, dataset):
+    pass
