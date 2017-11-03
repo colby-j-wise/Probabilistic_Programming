@@ -29,4 +29,23 @@ def rotate(data, theta):
     """
     rotation_matrix = tf.convert_to_tensor([[tf.cos(theta), -tf.sin(theta)],
                                             [tf.sin(theta), tf.cos(theta)]])
-    return tf.matmul(rotation_matrix, data, transpose_b=True, dtype=tf.float32)
+    return tf.matmul(rotation_matrix, data, transpose_b=True)
+
+
+def bin_2d(dataset, num_bins, pad_longitude=.02, pad_latitude=.02):
+        """
+        dataset is a two dimensional numpy array of shape (?, 2)
+        """
+        xmin = np.min(dataset[:, 1]) - pad_longitude
+        xmax = np.max(dataset[:, 1]) + pad_longitude
+        ymin = np.min(dataset[:, 0]) - pad_latitude
+        ymax = np.max(dataset[:, 0]) + pad_latitude
+        H = np.histogram2d(dataset[:, 1],
+                           dataset[:, 0],
+                           bins=num_bins,
+                           range=[[xmin, xmax], [ymin, ymax]])
+        return H
+
+
+def cars_in_bin(bin_indices, xaxes, yaxes, dataset):
+    pass
