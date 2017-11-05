@@ -2,21 +2,28 @@ import preprocessing
 import edward as ed
 from edward.models import Normal
 import tensorflow as tf
+import numpy as np
+import binning
 
 
 def main():
     fname = "data/train.csv"
-    data = preprocessing.get_data(fname)
-    y = data['trip_duration'].as_matrix()
-    X = data.drop(['id',
-                   'vendor_id',
-                   'pickup_datetime',
-                   'dropoff_datetime',
-                   'store_and_fwd_flag',
-                   'trip_duration',
-                   'dropoff_timestamp'],
-                  axis=1).as_matrix()
-    bayesian_linear_regression(X, y)
+    clean_data = preprocessing.get_data(fname)
+    # y = clean_data['trip_duration'].as_matrix()
+    # drop fields that don't matter or we wouldn't know prior to the trip
+    X = clean_data.drop(['id',
+                         'vendor_id',
+                         'pickup_datetime',
+                         'dropoff_datetime',
+                         'store_and_fwd_flag',
+                         'trip_duration',
+                         'dropoff_timestamp'],
+                        axis=1).as_matrix()
+    # bayesian_linear_regression(X, y)
+    print(clean_data.columns)
+    pickups = clean_data[:, ['pickup_longitude', 'pickup_latitude']]
+    dropoffs = clean_data[:, ['pickup_longitude', 'pickup_latitude']]
+    binning.bin_2d(np.concatenate((pickups, dropoffs)))
 
 
 def bayesian_linear_regression(x_train, y_train):
@@ -34,6 +41,7 @@ def bayesian_linear_regression(x_train, y_train):
 
     inference = ed.KLpq({w: qw, b: qb}, data={X: x_train, y: y_train})
     inference.run(n_samples=5, n_iter=250)
+    # TODO: model evaluation
 
 
 if __name__ == '__main__':
