@@ -15,11 +15,22 @@ def drop_greater_than(data, col, greater_than_val):
     return data[data[col] < greater_than_val].dropna()
 
 
+def datetime_to_epochmilli(date_col):
+    return date_col.map(lambda x: x.timestamp())
+
+
 def get_data(fname):
     d = pd.read_csv(fname,
                     parse_dates=['pickup_datetime',
                                  'dropoff_datetime'],
-                    date_parser=pd.to_datetime)
+                    date_parser=pd.Timestamp)
+    d = trim_lat_long_edges(d)
+    d['pickup_timestamp'] = datetime_to_epochmilli(d['pickup_datetime'])
+    d['dropoff_timestamp'] = datetime_to_epochmilli(d['dropoff_datetime'])
+    return d
+
+
+def trim_lat_long_edges(d):
     # cut out places west of the hudson river
     min_lat = 40.538
     d = drop_less_than(d, 'pickup_latitude', min_lat)
