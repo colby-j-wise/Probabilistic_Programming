@@ -4,6 +4,7 @@ from edward.models import Normal
 import tensorflow as tf
 import numpy as np
 import binning
+import json
 
 
 def main():
@@ -23,7 +24,11 @@ def main():
     print(clean_data.columns)
     pickups = clean_data[:, ['pickup_longitude', 'pickup_latitude']]
     dropoffs = clean_data[:, ['pickup_longitude', 'pickup_latitude']]
-    binning.bin_2d(np.concatenate((pickups, dropoffs)))
+    # binning.bin_2d(np.concatenate((pickups, dropoffs)))
+    with open('nyc_neighborhoods.json', 'r') as f:
+        neighborhoods = json.load(f)
+    for trip in clean_data.iterrows():
+        print(trip)
 
 
 def bayesian_linear_regression(x_train, y_train):
