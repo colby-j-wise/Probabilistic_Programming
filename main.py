@@ -1,10 +1,12 @@
 import preprocessing
+"""
 import edward as ed
 from edward.models import Normal
 import tensorflow as tf
+"""
 import numpy as np
-import binning
 import json
+import neighborhoods
 
 
 def main():
@@ -12,6 +14,7 @@ def main():
     clean_data = preprocessing.get_data(fname)
     # y = clean_data['trip_duration'].as_matrix()
     # drop fields that don't matter or we wouldn't know prior to the trip
+    """
     X = clean_data.drop(['id',
                          'vendor_id',
                          'pickup_datetime',
@@ -20,15 +23,13 @@ def main():
                          'trip_duration',
                          'dropoff_timestamp'],
                         axis=1).as_matrix()
+    """
     # bayesian_linear_regression(X, y)
-    print(clean_data.columns)
-    pickups = clean_data[:, ['pickup_longitude', 'pickup_latitude']]
-    dropoffs = clean_data[:, ['pickup_longitude', 'pickup_latitude']]
+    # pickups = clean_data.loc[:, ['pickup_longitude', 'pickup_latitude']]
+    # dropoffs = clean_data.loc[:, ['dropoff_longitude', 'dropoff_latitude']]
     # binning.bin_2d(np.concatenate((pickups, dropoffs)))
-    with open('nyc_neighborhoods.json', 'r') as f:
-        neighborhoods = json.load(f)
-    for trip in clean_data.iterrows():
-        print(trip)
+    with_neighborhoods = neighborhoods.add_neighborhoods(clean_data[:50])
+    print(with_neighborhoods.head())
 
 
 def bayesian_linear_regression(x_train, y_train):

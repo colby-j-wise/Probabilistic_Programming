@@ -66,3 +66,6 @@ wcwidth==0.1.7            # via prompt-toolkit
 werkzeug==0.12.2          # via tensorflow-tensorboard
 wheel==0.30.0             # via tensorflow, tensorflow-tensorboard
 widgetsnbextension==3.0.2  # via ipywidgets
+
+# added for project
+shapely==1.6.2

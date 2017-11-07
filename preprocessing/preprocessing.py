@@ -1,5 +1,29 @@
 import numpy as np
 import pandas as pd
+import io
+import neighborhoods
+
+
+def run():
+    INPUT_DIRECTORY = "data"
+    OUTPUT_DIRECTORY = "output"
+    N_DATA = "./nyc_neighborhoods.json"
+    neighborhood_shapes = neighborhoods.load_neighborhoods(N_DATA)
+    with open(INPUT_DIRECTORY + "/train.csv", "r") as train:
+        with open(OUTPUT_DIRECTORY + "/preprocessed.csv", "w") as processed:
+            columns = train.readline()
+            columns = columns[:len(columns) - 1].split(",")
+            for idx, line in enumerate(train):
+                if idx == 0:
+                    continue
+                line_df = pd.read_csv(io.StringIO(line),
+                                      names=columns)
+                neighborhoods.add_neighborhoods(line_df, neighborhood_shapes)
+                s = io.StringIO()
+                line_df.to_csv(s)
+                processed.write(s.getvalue())
+                if idx % 1000 == 0:
+                    print("processed: " + s.getvalue())
 
 
 def drop_outside_stddev(data, col, stddevs):
