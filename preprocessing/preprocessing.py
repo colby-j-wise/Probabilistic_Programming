@@ -2,6 +2,7 @@ import numpy as np
 import pandas as pd
 import io
 import neighborhoods
+import time
 
 
 def run():
@@ -9,6 +10,7 @@ def run():
     OUTPUT_DIRECTORY = "output"
     N_DATA = "./nyc_neighborhoods.json"
     neighborhood_shapes = neighborhoods.load_neighborhoods(N_DATA)
+    print("starting time: " + time.asctime())
     with open(INPUT_DIRECTORY + "/train.csv", "r") as train:
         with open(OUTPUT_DIRECTORY + "/preprocessed.csv", "w") as processed:
             columns = train.readline()
@@ -20,10 +22,12 @@ def run():
                                       names=columns)
                 neighborhoods.add_neighborhoods(line_df, neighborhood_shapes)
                 s = io.StringIO()
-                line_df.to_csv(s)
+                line_df.to_csv(s,
+                               header=False)
                 processed.write(s.getvalue())
-                if idx % 1000 == 0:
-                    print("processed: " + s.getvalue())
+                if idx % 5000 == 0:
+                    print("reached row", idx)
+                    print(s.getvalue())
 
 
 def drop_outside_stddev(data, col, stddevs):
