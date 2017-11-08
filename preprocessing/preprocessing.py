@@ -11,12 +11,18 @@ def run():
     N_DATA = "./nyc_neighborhoods.json"
     neighborhood_shapes = neighborhoods.load_neighborhoods(N_DATA)
     print("starting time: " + time.asctime())
-    with open(INPUT_DIRECTORY + "/train.csv", "r") as train:
-        with open(OUTPUT_DIRECTORY + "/preprocessed.csv", "w") as processed:
+    try:
+        with open(OUTPUT_DIRECTORY + "/xpreprocessed.csv", "r") as readable:
+            num_lines_already_written = \
+                [i for i, j in enumerate(readable)][-1] + 1
+    except OSError:
+        num_lines_already_written = 1
+    with open(INPUT_DIRECTORY + "/xtrain.csv", "r") as train:
+        with open(OUTPUT_DIRECTORY + "/xpreprocessed.csv", "a") as processed:
             columns = train.readline()
             columns = columns[:len(columns) - 1].split(",")
             for idx, line in enumerate(train):
-                if idx == 0:
+                if idx < num_lines_already_written:
                     continue
                 line_df = pd.read_csv(io.StringIO(line),
                                       names=columns)
