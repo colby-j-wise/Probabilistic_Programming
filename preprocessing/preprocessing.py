@@ -13,17 +13,21 @@ def run():
     print("starting time: " + time.asctime())
     try:
         with open(OUTPUT_DIRECTORY + "/xpreprocessed.csv", "r") as readable:
-            num_lines_already_written = \
-                [i for i, j in enumerate(readable)][-1] + 1
-    except OSError:
-        num_lines_already_written = 1
+            dat = pd.read_csv(readable, header=None)
+            last_id = dat.tail(1).iloc[0, 1]
+    except BaseException:
+        last_id = None
     with open(INPUT_DIRECTORY + "/xtrain.csv", "r") as train:
         with open(OUTPUT_DIRECTORY + "/xpreprocessed.csv", "a") as processed:
             columns = train.readline()
             columns = columns[:len(columns) - 1].split(",")
+            row_id = pd.read_csv(io.StringIO(train.readline()),
+                                 header=None).iloc[0, 0]
+            while last_id is not None and not last_id == row_id:
+                row_id = \
+                    pd.read_csv(io.StringIO(train.readline()),
+                                header=None).iloc[0, 0]
             for idx, line in enumerate(train):
-                if idx < num_lines_already_written:
-                    continue
                 line_df = pd.read_csv(io.StringIO(line),
                                       names=columns)
                 neighborhoods.add_neighborhoods(line_df, neighborhood_shapes)
