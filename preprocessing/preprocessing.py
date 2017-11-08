@@ -15,6 +15,7 @@ def run():
         with open(OUTPUT_DIRECTORY + "/xpreprocessed.csv", "r") as readable:
             dat = pd.read_csv(readable, header=None)
             last_id = dat.tail(1).iloc[0, 1]
+            print("read last id from file where processing already began")
     except BaseException:
         last_id = None
     with open(INPUT_DIRECTORY + "/xtrain.csv", "r") as train:
@@ -27,6 +28,7 @@ def run():
                 row_id = \
                     pd.read_csv(io.StringIO(train.readline()),
                                 header=None).iloc[0, 0]
+            print("starting at id", row_id)
             for idx, line in enumerate(train):
                 line_df = pd.read_csv(io.StringIO(line),
                                       names=columns)
