@@ -1,25 +1,28 @@
 import numpy as np
 import pandas as pd
 import io
-import neighborhoods
+import preprocessing.neighborhoods
 import time
 
 
 def run():
-    INPUT_DIRECTORY = "data"
-    OUTPUT_DIRECTORY = "output"
-    N_DATA = "./nyc_neighborhoods.json"
-    neighborhood_shapes = neighborhoods.load_neighborhoods(N_DATA)
+    ROOT_DIR = "./preprocessing"
+    INPUT_DIRECTORY = "/data"
+    OUTPUT_DIRECTORY = "/output"
+    N_DATA = ROOT_DIR + "/nyc_neighborhoods.json"
+    shapes = preprocessing.neighborhoods.load_neighborhoods(N_DATA)
     print("starting time: " + time.asctime())
     try:
-        with open(OUTPUT_DIRECTORY + "/xpreprocessed.csv", "r") as readable:
+        with open(ROOT_DIR + OUTPUT_DIRECTORY + "./preprocessed.csv", "r") \
+                as readable:
             dat = pd.read_csv(readable, header=None)
             last_id = dat.tail(1).iloc[0, 1]
             print("read last id from file where processing already began")
     except BaseException:
         last_id = None
-    with open(INPUT_DIRECTORY + "/xtrain.csv", "r") as train:
-        with open(OUTPUT_DIRECTORY + "/xpreprocessed.csv", "a") as processed:
+    with open(ROOT_DIR + INPUT_DIRECTORY + "/train.csv", "r") as train:
+        with open(ROOT_DIR + OUTPUT_DIRECTORY + "/preprocessed.csv", "a") \
+                as processed:
             columns = train.readline()
             columns = columns[:len(columns) - 1].split(",")
             row_id = pd.read_csv(io.StringIO(train.readline()),
@@ -32,7 +35,8 @@ def run():
             for idx, line in enumerate(train):
                 line_df = pd.read_csv(io.StringIO(line),
                                       names=columns)
-                neighborhoods.add_neighborhoods(line_df, neighborhood_shapes)
+                preprocessing.neighborhoods.add_neighborhoods(line_df,
+                                                              shapes)
                 s = io.StringIO()
                 line_df.to_csv(s,
                                header=False)
@@ -72,19 +76,21 @@ def get_data(fname):
 
 def trim_lat_long_edges(d):
     # cut out places west of the hudson river
-    min_lat = 40.538
+    # 40.755701, -73.977154 - top right
+    # 40.740783, -74.002973 - bottom left
+    min_lat = 40.740783
     d = drop_less_than(d, 'pickup_latitude', min_lat)
     d = drop_less_than(d, 'dropoff_latitude', min_lat)
     # remove anything south of breezy poinnt
-    min_long = -74.032607
+    min_long = -74.002973
     d = drop_less_than(d, 'pickup_longitude', min_long)
     d = drop_less_than(d, 'dropoff_longitude', min_long)
     # remove anything north of pelham bay
-    max_lat = 41.0
+    max_lat = 40.755701
     d = drop_greater_than(d, 'pickup_latitude', max_lat)
     d = drop_greater_than(d, 'dropoff_latitude', max_lat)
     # remove things too far east
-    max_long = -73.807216
+    max_long = -73.977154
     d = drop_greater_than(d, 'pickup_longitude', max_long)
     d = drop_greater_than(d, 'pickup_longitude', max_long)
 
