@@ -59,18 +59,15 @@ def drop_greater_than(data, col, greater_than_val):
     return data[data[col] < greater_than_val].dropna()
 
 
-def datetime_to_epochmilli(date_col):
+def datetime_to_epochseconds(date_col):
     return date_col.map(lambda x: x.timestamp())
 
 
 def get_data(fname):
     d = pd.read_csv(fname,
-                    parse_dates=['pickup_datetime',
-                                 'dropoff_datetime'],
+                    parse_dates=["pickup_datetime"],
                     date_parser=pd.Timestamp)
-    d = trim_lat_long_edges(d)
-    d['pickup_timestamp'] = datetime_to_epochmilli(d['pickup_datetime'])
-    d['dropoff_timestamp'] = datetime_to_epochmilli(d['dropoff_datetime'])
+    d["pickup_timestamp"] = datetime_to_epochseconds(d["pickup_datetime"])
     return d
 
 
