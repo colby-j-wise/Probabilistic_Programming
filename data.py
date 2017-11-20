@@ -33,6 +33,14 @@ def add_handy_columns(data):
     return d5
 
 
+def standardize_cols(data):
+    ret = data.copy()
+    for col in ret:
+        if np.issubdtype(ret[col].dtype, np.number):
+            ret[col] = (ret[col] - ret[col].mean()) / ret[col].std()
+    return ret
+
+
 def __add_pickup_day_of_week(x):
     z = x.copy()
     z["pickup_day_of_week"] = x["pickup_datetime"].apply(lambda x: x.dayofweek)
