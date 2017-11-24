@@ -10,27 +10,27 @@ def get_borough_data(path, borough):
                        .dropna()
 
 
+def train_test_split(dataset, frac_test, x_cols, y_cols):
+    test_indices = np.random.choice(dataset.shape[0],
+                                    size=int(dataset.shape[0] * frac_test),
+                                    replace=False)
+    x_test = dataset.iloc[test_indices][x_cols].copy()
+    y_test = dataset.iloc[test_indices][y_cols].copy()
+    x_train = dataset.drop(test_indices)[x_cols].dropna().copy()
+    y_train = dataset.drop(test_indices)[y_cols].dropna().copy()
+    return x_train, y_train, \
+        x_test, y_test
+
+
 def get_neighborhood_to_neighborhood(source_neighborhood, sink_neighborhood,
                                      full_dataset):
-    return full_dataset.where((full_dataset["pickup_neighborhood_name"] ==
-                               source_neighborhood) &
-                              (full_dataset["dropoff_neighborhood_name"] ==
-                               sink_neighborhood)).dropna()
-
-
-def clean_data(data):
-    data = __remove_outliers(data, "trip_duration", 1.5)
-    data = __remove_leq_zero(data, "trip_duration")
-    return data.reset_index(drop=True)
-
-
-def add_handy_columns(data):
-    d1 = __add_manhattan_distance(data)
-    d2 = __add_pickup_hour(d1)
-    d3 = __add_dropoff_hour(d2)
-    d4 = __add_pickup_day_of_week(d3)
-    d5 = __add_dropoff_day_of_week(d4)
-    return d5
+    return __add_handy_columns(
+        __clean_data(
+            full_dataset.where(
+                (full_dataset["pickup_neighborhood_name"] ==
+                 source_neighborhood) &
+                (full_dataset["dropoff_neighborhood_name"] ==
+                 sink_neighborhood)).dropna()))
 
 
 def standardize_cols(data):
@@ -39,6 +39,27 @@ def standardize_cols(data):
         if np.issubdtype(ret[col].dtype, np.number):
             ret[col] = (ret[col] - ret[col].mean()) / ret[col].std()
     return ret
+
+
+def __clean_data(data):
+    data = __remove_outliers(data, "trip_duration", 1.5)
+    data = __remove_leq_zero(data, "trip_duration")
+    data = __scale_col(data, "trip_duration", 1/60)
+    return data.reset_index(drop=True)
+
+
+def __add_handy_columns(data):
+    d1 = __add_manhattan_distance(data)
+    d2 = __add_pickup_hour(d1)
+    d3 = __add_dropoff_hour(d2)
+    d4 = __add_pickup_day_of_week(d3)
+    d5 = __add_dropoff_day_of_week(d4)
+    return d5
+
+
+def __scale_col(data, column_name, scale):
+    data[column_name] *= scale
+    return data
 
 
 def __add_pickup_day_of_week(x):
