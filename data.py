@@ -14,10 +14,10 @@ def train_test_split(dataset, frac_test, x_cols, y_cols):
     test_indices = np.random.choice(dataset.shape[0],
                                     size=int(dataset.shape[0] * frac_test),
                                     replace=False)
-    x_test = dataset.iloc[test_indices][x_cols].copy()
-    y_test = dataset.iloc[test_indices][y_cols].copy()
-    x_train = dataset.drop(test_indices)[x_cols].dropna().copy()
-    y_train = dataset.drop(test_indices)[y_cols].dropna().copy()
+    x_test = dataset.iloc[test_indices][x_cols].copy(deep=True)
+    y_test = dataset.iloc[test_indices][y_cols].copy(deep=True)
+    x_train = dataset.drop(test_indices)[x_cols].dropna().copy(deep=True)
+    y_train = dataset.drop(test_indices)[y_cols].dropna().copy(deep=True)
     return x_train, y_train, \
         x_test, y_test
 
@@ -34,7 +34,7 @@ def get_neighborhood_to_neighborhood(source_neighborhood, sink_neighborhood,
 
 
 def standardize_cols(data):
-    ret = data.copy()
+    ret = data.copy(deep=True)
     for col in ret:
         if np.issubdtype(ret[col].dtype, np.number):
             ret[col] = (ret[col] - ret[col].mean()) / ret[col].std()
@@ -63,7 +63,7 @@ def __scale_col(data, column_name, scale):
 
 
 def __add_pickup_day_of_week(x):
-    z = x.copy()
+    z = x.copy(deep=True)
     z["pickup_day_of_week"] = x["pickup_datetime"].apply(lambda x: x.dayofweek)
     return z
 
@@ -71,20 +71,20 @@ def __add_pickup_day_of_week(x):
 def __add_dropoff_day_of_week(x):
     if "dropoff_datetime" not in x.columns:
         x = __add_dropoff_datetime(x)
-    z = x.copy()
+    z = x.copy(deep=True)
     z["dropoff_day_of_week"] = x["dropoff_datetime"].apply(lambda x:
                                                            x.dayofweek)
     return z
 
 
 def __add_dropoff_timestamp(x):
-    z = x.copy()
+    z = x.copy(deep=True)
     z["dropoff_timestamp"] = x["pickup_timestamp"] + x["trip_duration"]
     return z
 
 
 def __add_dropoff_datetime(x):
-    z = x.copy()
+    z = x.copy(deep=True)
     z["dropoff_datetime"] = x["pickup_datetime"] + \
         x["trip_duration"].apply(lambda x: pd.Timedelta(seconds=x))
     return z
@@ -93,19 +93,19 @@ def __add_dropoff_datetime(x):
 def __add_dropoff_hour(data):
     if "dropoff_datetime" not in data.columns:
         data = __add_dropoff_datetime(data)
-    z = data.copy()
+    z = data.copy(deep=True)
     z["dropoff_hour"] = data["dropoff_datetime"].apply(lambda x: x.hour)
     return z
 
 
 def __add_pickup_hour(x):
-    z = x.copy()
+    z = x.copy(deep=True)
     z["pickup_hour"] = x["pickup_datetime"].apply(lambda x: x.hour)
     return z
 
 
 def __add_manhattan_distance(data):
-    z = data.copy()
+    z = data.copy(deep=True)
     z["manhattan_distance"] = abs(data["pickup_longitude"] -
                                   data["dropoff_longitude"] +
                                   data["pickup_latitude"] -
