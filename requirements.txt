@@ -8,7 +8,7 @@ appnope==0.1.0            # via ipython
 bleach==1.5.0             # via nbconvert, tensorflow-tensorboard
 cycler==0.10.0            # via matplotlib
 decorator==4.1.2          # via ipython, traitlets
-edward==1.3.3
+edward==1.3.4
 entrypoints==0.2.3        # via nbconvert
 flake8==3.4.1             # via pytest-flake8
 html5lib==0.9999999       # via bleach, tensorflow-tensorboard
