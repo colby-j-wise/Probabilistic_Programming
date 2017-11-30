@@ -57,7 +57,6 @@ def vis_glm_poly(num_pnts, degree, indicator_cols, actual_data, qw, qb):
     line = ed.models.Normal(loc=ed.dot(x_vis_stndzd, qw_i)
                             + qb_i, scale=tf.constant([1.0], tf.float64))\
         .sample().eval()
-    line = np.matmul(x_vis_stndzd, qw_i) + qb_i + qalpha_i
     plt.scatter(x=times, y=line)
     plt.scatter(x=actual_data["pickup_hour"], y=actual_data["trip_duration"])
     plt.xlabel("Pickup Hour")
