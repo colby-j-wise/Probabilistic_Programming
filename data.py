@@ -44,7 +44,7 @@ def standardize_cols(data):
 def __clean_data(data):
     data = __remove_outliers(data, "trip_duration", 1.5)
     data = __remove_leq_zero(data, "trip_duration")
-    data = __scale_col(data, "trip_duration", 1/60)
+    data = __scale_col(data, "trip_duration", 1 / 60)
     return data.reset_index(drop=True)
 
 
