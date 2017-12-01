@@ -8,6 +8,28 @@ import edward as ed
 import tensorflow as tf
 
 
+def gp_reg_invert_K(x, y, x_star, kernel, kernel_params=[]):
+    N = tf.cast(x.get_shape()[0], tf.int32).eval(session=tf.Session())
+    K = kernel(x, x, *kernel_params)
+    k_star = kernel(x_star, x, *kernel_params)
+    k_star_star = kernel(x_star, x_star, *kernel_params)
+    mu_n, sigma_n_sqr = tf.nn.moments(y, 1)
+    K_noisy = K + sigma_n_sqr * tf.eye(N, dtype=tf.float64)
+    K_noisy_inv = tf.matrix_inverse(K_noisy)
+    f_bar = tf.matmul(tf.matmul(k_star, K_noisy_inv), y)
+    tmp = tf.matmul(tf.matmul(k_star, K_noisy_inv), k_star, transpose_b=True)
+    v = k_star_star - tmp
+
+    k_y = kernel(y, y, *kernel_params)
+    y_k_y = tf.matmul(tf.matmul(y, k_y, transpose_a=True), y)
+    first = - 0.5 * y_k_y
+    second = - 0.5 * tf.log(tf.norm(k_y))
+    third = tf.cast(- tf.cast(N, dtype=tf.float32) / 2 * tf.log(2 * np.pi), dtype=tf.float64)
+    logp = first + second + third
+
+    return f_bar, v, logp
+
+
 def visualize_by_borough(dataset):
     pickups = dataset.loc[:, ["pickup_longitude",
                               "pickup_latitude",
