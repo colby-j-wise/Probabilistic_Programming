@@ -50,7 +50,6 @@ def RationalQuadratic(X, X2=None, lengthScale=0.5, alpha=0.1, variance=1.0):
 def ExpSineSquared(X, Xs=None, lengthScale=0.5, period=8.0, sigma=1.0):
     if Xs is None:
         X = X.eval(session=tf.Session())
-        print
         dists = squareform(pdist(X, metric='euclidean'))
         arg = np.pi * dists / period
         sin_arg = np.sin(arg)
@@ -59,7 +58,7 @@ def ExpSineSquared(X, Xs=None, lengthScale=0.5, period=8.0, sigma=1.0):
         X = X.eval(session=tf.Session())
         Xs = Xs.eval(session=tf.Session())
         dists = cdist(X, Xs, metric='euclidean')
-        K = np.exp(- 2 * (np.sin(np.pi / period * dists) 
+        K = np.exp(- 2 * (np.sin(np.pi / period * dists)
                     / lengthScale) ** 2)
         K = sigma * K
     return tf.convert_to_tensor(K, tf.float64)
