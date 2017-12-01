@@ -1,6 +1,6 @@
 import tensorflow as tf
 import numpy as np
-import scipy.spatial as spt
+from scipy.spatial.distance import pdist, cdist, squareform
 
 
 # Needto make sure the data subset was PSD
@@ -54,3 +54,20 @@ def RationalQuadratic(X, X2=None, lengthScale=1.0, alpha=1.0):
     output =  1 + (square / 2)
     K = tf.pow(output, -alpha)
     return K
+
+
+def ExpSineSquared(X, Xs=None, lengthScale=0.5, period=8.0):
+    if Xs is None:
+        X = X.eval(session=tf.Session())
+        print
+        dists = squareform(pdist(X, metric='euclidean'))
+        arg = np.pi * dists / period
+        sin_arg = np.sin(arg)
+        K = np.exp(- 2 * (sin_arg / lengthScale) ** 2)
+    else:
+        X = X.eval(session=tf.Session())
+        Xs = Xs.eval(session=tf.Session())
+        dists = cdist(X, Xs, metric='euclidean')
+        K = np.exp(- 2 * (np.sin(np.pi / period * dists) 
+                    / lengthScale) ** 2)
+    return tf.convert_to_tensor(K, tf.float64)
