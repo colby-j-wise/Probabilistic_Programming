@@ -25,7 +25,7 @@ def rbf(X, X2=None, lengthscale=1.0, variance=1.0):
     return output
 
 
-def RationalQuadratic(X, X2=None, lengthScale=1.0, alpha=1.0):
+def RationalQuadratic(X, X2=None, lengthScale=0.5, alpha=0.1):
     lengthScale = tf.convert_to_tensor(lengthScale, tf.float64)
     alpha = tf.convert_to_tensor(alpha, tf.float64)
     X = tf.convert_to_tensor(X)
