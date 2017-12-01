@@ -3,15 +3,6 @@ import numpy as np
 from scipy.spatial.distance import pdist, cdist, squareform
 
 
-# Needto make sure the data subset was PSD
-# since tf.cholesky requires postitive semi definite matrix
-def is_positive_definite(X):
-	#X = X.eval()
-	if ( np.all(np.linalg.eigvals(X) > 0) ):
-		return True
-	else:
-		return False
-
 
 def rbf(X, X2=None, lengthscale=1.0, variance=1.0):
     lengthscale = tf.convert_to_tensor(lengthscale, tf.float64)
