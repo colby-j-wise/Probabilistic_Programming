@@ -4,7 +4,6 @@ import seaborn as sns
 import data
 import basis_functions
 import matplotlib.pyplot as plt
-import edward as ed
 import tensorflow as tf
 
 
@@ -24,7 +23,8 @@ def gp_reg_invert_K(x, y, x_star, kernel, kernel_params=[]):
     y_k_y = tf.matmul(tf.matmul(y, k_y, transpose_a=True), y)
     first = - 0.5 * y_k_y
     second = - 0.5 * tf.log(tf.norm(k_y))
-    third = tf.cast(- tf.cast(N, dtype=tf.float32) / 2 * tf.log(2 * np.pi), dtype=tf.float64)
+    third = tf.cast(- tf.cast(N, dtype=tf.float32) /
+                    2 * tf.log(2 * np.pi), dtype=tf.float64)
     logp = first + second + third
 
     return f_bar, v, logp
@@ -63,6 +63,7 @@ def vis_glm(num_pnts, indicator_cols, actual_data, qw, qb):
     plt.ylabel("Trip Duration")
     plt.show()
 
+
 def vis_glm_poly(num_pnts, degree, indicator_cols, actual_data, qw, qb):
     times = np.linspace(0, 24, num_pnts)
     x_vis = pd.DataFrame({i: [0.0] * num_pnts for i in indicator_cols})
@@ -81,14 +82,17 @@ def vis_glm_poly(num_pnts, degree, indicator_cols, actual_data, qw, qb):
     plt.show()
 
 
-def vis_gp(x, y, kernel, indicator_cols, num_samples, kernel_params=[], interp_pnts=100, title=""):
+def vis_gp(x, y, kernel, indicator_cols, num_samples, kernel_params=[],
+           interp_pnts=100, title=""):
     times = np.linspace(0, 24, interp_pnts)
     x_vis = pd.DataFrame({i: [0.0] * interp_pnts for i in indicator_cols})
     x_vis["pickup_hour"] = times
-    x_vis["pickup_timestamp"] = x_vis["pickup_hour"].apply(lambda x: pd.to_datetime(x, unit="s").hour)
+    x_vis["pickup_timestamp"] = x_vis["pickup_hour"]\
+        .apply(lambda x: pd.to_datetime(x, unit="s").hour)
     x_vis_stdzd = data.standardize_cols(x_vis).fillna(0.0)
     for i in range(num_samples):
-        f, v, logp = gp_reg_invert_K(x, y, x_vis_stdzd, kernel, kernel_params=kernel_params)
+        f, v, logp = gp_reg_invert_K(x, y, x_vis_stdzd, kernel,
+                                     kernel_params=kernel_params)
         mean = np.reshape(f.eval(session=tf.Session()), -1)
         covariance = v.eval(session=tf.Session())
         samples = np.random.multivariate_normal(mean, covariance)

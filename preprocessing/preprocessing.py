@@ -3,36 +3,6 @@ import pandas as pd
 import io
 import preprocessing.neighborhoods
 import time
-"""
-import fiona
-from shapely.geometry import shape, Point
-import pandas as pd
-
-
-PLACES = [shape(pol["geometry"]) for pol in
-          fiona.open("data/nynta_17d/nynta.shp")]
-
-
-def add_neighborhood(x):
-    pickup_point = Point((x["pickup_longitude"], x["pickup_latitude"]))
-    dropoff_point = Point((x["dropoff_longitude"], x["dropoff_latitude"]))
-    # x["pickup_neighborhood"] = map(PLACES, lambda x: x.co
-
-def main():
-    dat = fiona.open()
-    shapes = [shape(pol["geometry"]) for pol in dat]
-    trips = pd.read_csv("./data/train.csv")
-    last = 0
-    for i in range(0, trips.shape[0], 5000):
-        trips[last:i].apply(add_point_columns, axis=1)
-        last = i
-
-
-
-if __name__ == "__main__":
-    main()
-
-"""
 
 
 def run():

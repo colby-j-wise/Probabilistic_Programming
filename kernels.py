@@ -3,7 +3,6 @@ import numpy as np
 from scipy.spatial.distance import pdist, cdist, squareform
 
 
-
 def rbf(X, X2=None, lengthscale=1.0, variance=1.0):
     lengthscale = tf.convert_to_tensor(lengthscale, tf.float64)
     variance = tf.convert_to_tensor(variance, tf.float64)
@@ -42,8 +41,8 @@ def RationalQuadratic(X, X2=None, lengthScale=0.5, alpha=0.1, variance=1.0):
         X2s = tf.reduce_sum(tf.square(X2), 1)
     square = tf.reshape(Xs, [-1, 1]) + tf.reshape(X2s, [1, -1]) - 2 *\
         tf.matmul(X, X2, transpose_b=True)
-    output =  1 + (square / 2)
-    K = variance * tf.pow(output, -alpha)
+    output = 1 + (square / 2)
+    K = variance * tf.pow(output, - alpha)
     return K
 
 
@@ -58,7 +57,6 @@ def ExpSineSquared(X, Xs=None, lengthScale=0.5, period=8.0, sigma=1.0):
         X = X.eval(session=tf.Session())
         Xs = Xs.eval(session=tf.Session())
         dists = cdist(X, Xs, metric='euclidean')
-        K = np.exp(- 2 * (np.sin(np.pi / period * dists)
-                    / lengthScale) ** 2)
+        K = np.exp(- 2 * (np.sin(np.pi / period * dists) / lengthScale) ** 2)
         K = sigma * K
     return tf.convert_to_tensor(K, tf.float64)
