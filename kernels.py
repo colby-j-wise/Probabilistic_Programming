@@ -25,7 +25,7 @@ def rbf(X, X2=None, lengthscale=1.0, variance=1.0):
     return output
 
 
-def RationalQuadratic(X, X2=None, lengthScale=1.0, alpha=1.0):
+def RationalQuadratic(X, X2=None, lengthScale=0.5, alpha=0.1, variance=1.0):
     lengthScale = tf.convert_to_tensor(lengthScale, tf.float64)
     alpha = tf.convert_to_tensor(alpha, tf.float64)
     X = tf.convert_to_tensor(X)
@@ -43,11 +43,11 @@ def RationalQuadratic(X, X2=None, lengthScale=1.0, alpha=1.0):
     square = tf.reshape(Xs, [-1, 1]) + tf.reshape(X2s, [1, -1]) - 2 *\
         tf.matmul(X, X2, transpose_b=True)
     output =  1 + (square / 2)
-    K = tf.pow(output, -alpha)
+    K = variance * tf.pow(output, -alpha)
     return K
 
 
-def ExpSineSquared(X, Xs=None, lengthScale=0.5, period=8.0):
+def ExpSineSquared(X, Xs=None, lengthScale=0.5, period=8.0, sigma=1.0):
     if Xs is None:
         X = X.eval(session=tf.Session())
         print
@@ -61,4 +61,5 @@ def ExpSineSquared(X, Xs=None, lengthScale=0.5, period=8.0):
         dists = cdist(X, Xs, metric='euclidean')
         K = np.exp(- 2 * (np.sin(np.pi / period * dists) 
                     / lengthScale) ** 2)
+        K = sigma * K
     return tf.convert_to_tensor(K, tf.float64)
