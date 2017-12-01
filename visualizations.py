@@ -48,7 +48,7 @@ def vis_glm_poly(num_pnts, degree, indicator_cols, actual_data, qw, qb):
     x_vis["pickup_timestamp"] = x_vis["pickup_hour"]\
         .apply(lambda x: pd.to_datetime(x, unit="s").hour)
     x_vis_stndzd = basis_functions.polynomial(
-    data.standardize_cols(x_vis).fillna(0.0), degree=degree)
+        data.standardize_cols(x_vis).fillna(0.0), degree=degree)
     qw_i = qw.sample().eval()
     qb_i = qb.sample().eval()
     line = np.dot(x_vis_stndzd, qw_i) + qb_i
