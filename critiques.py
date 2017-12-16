@@ -2,6 +2,7 @@ import edward as ed
 import numpy as np
 import tensorflow as tf
 import matplotlib.pyplot as plt
+import seaborn as sns
 
 
 def critique_glm(posterior_pred, x, x_test, y_test, w, b, qw, qb):
@@ -45,3 +46,21 @@ def critique_glm(posterior_pred, x, x_test, y_test, w, b, qw, qb):
     ed.ppc_stat_hist_plot(ppc_3[1][1], ppc_1[0], stat_name=r'$T \equiv mean$',
                           bins=10)
     plt.show()
+
+
+def min_max_gp_ppc(posterior_predictive, true_y, n_samples=100):
+        with tf.Session() as sess:
+            samples = posterior_predictive.sample([n_samples])
+            mins = tf.reduce_min(samples, axis=1).eval(session=sess)
+            maxes = tf.reduce_max(samples, axis=1).eval(session=sess)
+            means = tf.reduce_mean(samples, axis=1).eval(session=sess)
+
+        ax = sns.distplot(mins, kde=False)
+        max_val = ax.get_ylim()[1]
+        plt.vlines([min(true_y)], ymin=0.0, ymax=max_val)
+        plt.show()
+
+        ax = sns.distplot(maxes, kde=False)
+        max_val = ax.get_ylim()[1]
+        plt.vlines(max(true_y), ymin=0.0, ymax=max_val)
+        plt.show()
