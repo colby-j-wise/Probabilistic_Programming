@@ -7,13 +7,13 @@ import matplotlib.pyplot as plt
 def critique_glm(posterior_pred, x, x_test, y_test, w, b, qw, qb):
 
     def t_max(data_dict, latent):
-        tf.reduce_max(data_dict[posterior_pred])
+        return tf.reduce_max(data_dict[posterior_pred])
 
     def t_min(data_dict, latent):
-        tf.reduce_min(data_dict[posterior_pred])
+        return tf.reduce_min(data_dict[posterior_pred])
 
     def t_mean(data_dict, latent):
-        tf.reduce_mean(data_dict[posterior_pred])
+        return tf.reduce_mean(data_dict[posterior_pred])
 
     ppc_1 = ed.ppc(t_max,
                    data={
